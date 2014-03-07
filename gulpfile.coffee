@@ -20,7 +20,7 @@ marked = require "marked" # For :markdown filter in jade
 app = express()
 server = tinylr()
 
-# --- Basic Tasks ---
+# --- Basic Jobs ---
 
 gulp.task "stylus", ->
   gulp.src "src/**/*.styl"
@@ -86,22 +86,11 @@ gulp.task "webpack", ["assets"], ->
   webpack webpackConfig, (err, stats) ->
     gutil.log "#{err}, #{stats}"
 
-# gulp.task "assets", ["clean"], ->
-#   gulp.start "coffee", "stylus", "jade", "symlink", ->
+# --- Basic Tasks ---
 
 gulp.task "assets", ["coffee", "stylus", "jade", "symlink"]
 
 # Default Task
 gulp.task "default", ["clean"], ->
   gulp.start "assets", "express", "webpack", "watch"
-  # gulp.start "assets" ,"express", "webpack", "watch"
-# gulp.task "default", [
-#   "clean"
-#   "coffee"
-#   "stylus"
-#   "jade"
-#   "express"
-#   "webpack"
-#   "symlink"
-#   "watch"
-# ]
+
