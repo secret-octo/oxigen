@@ -1,0 +1,17 @@
+- var pageTitle = "oxigen"
+
+doctype html
+html
+  head
+    title= pageTitle
+    link(rel='stylesheet', href='./styles/main.css')
+    script(type="text/javascript", src='./bower_components/platform/platform.js')
+
+    link(rel="import", href="elements/poker-card/poker-card.html")
+
+    script(type="text/javascript", src='./bundle.js')
+
+  body
+    .game
+      block game
+

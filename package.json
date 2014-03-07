@@ -1,0 +1,31 @@
+{
+  "name": "oxigen",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "connect-livereload": "^0.3.2",
+    "gulp-livereload": "^1.2.0",
+    "marked": "^0.3.1",
+    "gulp-concat": "^2.1.7",
+    "gulp-coffee": "^1.4.1",
+    "gulp-util": "^2.2.14",
+    "tiny-lr": "0.0.5",
+    "gulp": "^3.5.5",
+    "gulp-uglify": "^0.2.1",
+    "gulp-stylus": "0.0.14",
+    "gulp-jade": "^0.4.2",
+    "gulp-csso": "^0.2.6",
+    "webpack": "^1.1.0-beta2",
+    "express": "^3.4.8",
+    "gulp-symlink": "^0.4.1",
+    "gulp-clean": "^0.2.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
