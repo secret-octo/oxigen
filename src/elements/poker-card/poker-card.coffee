@@ -46,13 +46,13 @@ do ->
 
   Polymer 'poker-card', {
     ready: ->
-      this.cardScore = this.cardSuit = 'null'
-      this.cardColor = 'gray'
+      @cardScore = @cardSuit = '#'
+      @cardColor = 'gray'
 
-      for node, i in this.impl.attributes
-        if node.name is 'card-name'
-          [this.cardScore, this.cardSuit] = node.value.split('')
-          this.cardColor = colorMap[this.cardSuit]
-          this.cardSuit = suitMap[this.cardSuit]
-          this.cardScore = scoreMap[this.cardScore]
+      for node, i in @attributes
+        if node.name is 'value'
+          [@cardScore, @cardSuit] = node.value.split('')
+          @cardColor = colorMap[@cardSuit]
+          @cardSuit = suitMap[@cardSuit]
+          @cardScore = scoreMap[@cardScore]
   }

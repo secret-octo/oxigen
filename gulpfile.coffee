@@ -11,6 +11,10 @@ concat = require "gulp-concat"
 livereload = require "gulp-livereload"
 symlink = require "gulp-symlink"
 clean = require "gulp-clean"
+watch = require "gulp-watch"
+plumber = require "gulp-plumber"
+
+es = require "event-stream"
 
 tinylr = require "tiny-lr"
 express = require "express"
@@ -18,28 +22,57 @@ webpack = require "webpack"
 marked = require "marked" # For :markdown filter in jade
 
 app = express()
-server = tinylr()
+serverLR = tinylr()
 
-# --- Basic Jobs ---
 
-gulp.task "stylus", ->
-  gulp.src "src/**/*.styl"
-    .pipe stylus()
-    #.pipe(csso())
-    .pipe gulp.dest "dist/"
-    .pipe livereload(server)
+combine = (tasks) -> es.pipeline.apply(es, tasks)
 
-gulp.task "coffee", ->
-  gulp.src "src/**/*.coffee"
-    .pipe coffee {bare: on}
-    .pipe gulp.dest "dist/"
-    .pipe livereload(server)
+createTask = (cfg, tasks) ->
+  gulp.src cfg.src
+    .pipe combine tasks 
+    .pipe gulp.dest cfg.dest
 
-gulp.task "jade", ->
-  gulp.src "src/**/*.jade"
-    .pipe jade {pretty: on}
-    .pipe gulp.dest "dist/"
-    .pipe livereload(server)
+createWatcher = (cfg, tasks)->
+  createTask cfg, [
+    watch()
+    plumber()
+    combine tasks
+    livereload(serverLR)
+    webpackTask
+  ]
+
+webpackTask = do ->
+  webpackConfig = {
+    entry: "./dist/scripts/main.js"
+    output: {
+      path: "./dist/"
+      filename: "bundle.js"
+    }
+  }
+  es.through (file, cb) ->
+    webpack webpackConfig, (err, stats) =>
+      gutil.log "#{err}, #{stats}"
+      @emit "data", file
+
+# webpackTask = 
+#   webpackFn(this, file)
+
+# --- Individual Tasks ---
+
+gulp.task "stylus", -> 
+  createWatcher {src: "src/**/*.styl", dest: "dist/"}, [
+    stylus()
+  ]
+
+gulp.task "coffee", -> 
+  createWatcher {src: "src/**/*.coffee", dest: "dist/"}, [
+    coffee {bare: on}
+  ]
+
+gulp.task "jade", -> 
+  createWatcher {src: "src/**/*.jade", dest: "dist/"}, [
+    jade {pretty: on}
+  ]
 
 gulp.task "symlink", ->
   gulp.src "bower_components"
@@ -49,48 +82,22 @@ gulp.task "clean", ->
   gulp.src("dist", {read:false})
     .pipe clean()
 
-gulp.task "express", ->
+# --- Collective Tasks ---
+
+gulp.task "assets", ["clean"], ->
+  gulp.start "coffee", "stylus", "jade", "symlink"
+
+
+gulp.task "express", ["assets"], ->
   app.use require('connect-livereload')()
   app.use express.static(path.resolve("./dist"))
   app.listen 3001
   gutil.log "Listening on port: 3001"
 
-gulp.task "watch", ->
-  server.listen 35729, (err) ->
-    console.log(err) if err
-  gulp.watch "src/**/*.styl", ["stylus", "webpack"]
-  gulp.watch "src/**/*.coffee", ["coffee", "webpack"]
-  gulp.watch "src/**/*.jade", ["jade", "webpack"]
-
-gulp.task "webpack", ["assets"], ->
-  webpackConfig = {
-    # cache: on
-    entry: "./dist/scripts/main.js"
-    output: {
-      path: "./dist/"
-      filename: "bundle.js"
-    }
-    resolve: {
-      alias:{
-        "main.css": "#{__dirname}/dist/styles/main.css"
-      }
-
-    }
-    # module: {
-    #   loaders: [{
-    #     test: /\.css$/, loader: "style/useable!css"
-    #   }]
-    # }
-  }
-
-  webpack webpackConfig, (err, stats) ->
-    gutil.log "#{err}, #{stats}"
-
-# --- Basic Tasks ---
-
-gulp.task "assets", ["coffee", "stylus", "jade", "symlink"]
-
 # Default Task
-gulp.task "default", ["clean"], ->
-  gulp.start "assets", "express", "webpack", "watch"
+gulp.task "default", ->
+  serverLR.listen 35729, (err) ->
+    console.log "err" if err
+
+    gulp.start "express"
 
