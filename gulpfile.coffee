@@ -4,10 +4,10 @@ gulp = require "gulp"
 gutil = require "gulp-util"
 stylus = require "gulp-stylus"
 coffee = require "gulp-coffee"
-csso = require "gulp-csso"
-uglify = require "gulp-uglify"
+#csso = require "gulp-csso"
+#uglify = require "gulp-uglify"
 jade = require "gulp-jade"
-concat = require "gulp-concat"
+#concat = require "gulp-concat"
 livereload = require "gulp-livereload"
 symlink = require "gulp-symlink"
 clean = require "gulp-clean"
@@ -19,7 +19,7 @@ es = require "event-stream"
 tinylr = require "tiny-lr"
 express = require "express"
 webpack = require "webpack"
-marked = require "marked" # For :markdown filter in jade
+#marked = require "marked" # For :markdown filter in jade
 
 app = express()
 
@@ -34,24 +34,28 @@ serverLR = tinylr({
 
 # --- Utilities ---
 
-combineStream = (tasks) -> es.pipeline.apply(es, tasks)
+combo = (tasks) -> gutil.combine.apply(gutil, tasks)()
+
+through = (fn) ->
+  es.through (file, cb) ->
+    fn.call @, file
 
 createTask = (cfg, tasks) ->
   gulp.src cfg.src
-    .pipe combineStream tasks 
+    .pipe combo tasks 
     .pipe gulp.dest cfg.dest
 
 createWatcher = (cfg, tasks)->
   createTask cfg, [
     watch()
     plumber()
-    combineStream tasks
+    combo tasks
     livereload(serverLR)
     webpackTask
   ]
 
 webpackTask = do ->
-  webpackConfig = {
+  cfg = {
     entry: "./dist/scripts/main.js"
     output: {
       path: "./dist/"
@@ -59,8 +63,8 @@ webpackTask = do ->
     }
   }
 
-  es.through (file, cb) ->
-    webpack webpackConfig, (err, stats) =>
+  through (file) ->
+    webpack cfg, (err, stats) =>
       gutil.log "#{err}, #{stats}"
       @emit "data", file
 
