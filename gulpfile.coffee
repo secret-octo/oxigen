@@ -22,21 +22,30 @@ webpack = require "webpack"
 marked = require "marked" # For :markdown filter in jade
 
 app = express()
-serverLR = tinylr()
 
+# must change the node_modules/tiny-lr/lib/client.js file 
+# replace LiveCss to liveCSS.
+# contribute back this simple bug fix.
+serverLR = tinylr({
+  liveCSS: off
+  liveJs: off
+  LiveImg: off
+  })
 
-combine = (tasks) -> es.pipeline.apply(es, tasks)
+# --- Utilities ---
+
+combineStream = (tasks) -> es.pipeline.apply(es, tasks)
 
 createTask = (cfg, tasks) ->
   gulp.src cfg.src
-    .pipe combine tasks 
+    .pipe combineStream tasks 
     .pipe gulp.dest cfg.dest
 
 createWatcher = (cfg, tasks)->
   createTask cfg, [
     watch()
     plumber()
-    combine tasks
+    combineStream tasks
     livereload(serverLR)
     webpackTask
   ]
@@ -49,13 +58,12 @@ webpackTask = do ->
       filename: "bundle.js"
     }
   }
+
   es.through (file, cb) ->
     webpack webpackConfig, (err, stats) =>
       gutil.log "#{err}, #{stats}"
       @emit "data", file
 
-# webpackTask = 
-#   webpackFn(this, file)
 
 # --- Individual Tasks ---
 
@@ -82,7 +90,7 @@ gulp.task "clean", ->
   gulp.src("dist", {read:false})
     .pipe clean()
 
-# --- Collective Tasks ---
+# --- Combined Tasks ---
 
 gulp.task "assets", ["clean"], ->
   gulp.start "coffee", "stylus", "jade", "symlink"
@@ -94,10 +102,10 @@ gulp.task "express", ["assets"], ->
   app.listen 3001
   gutil.log "Listening on port: 3001"
 
-# Default Task
+# --- Default Task ---
+
 gulp.task "default", ->
   serverLR.listen 35729, (err) ->
     console.log "err" if err
-
     gulp.start "express"
 
