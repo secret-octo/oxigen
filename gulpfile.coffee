@@ -72,7 +72,7 @@ webpackTask = do ->
 # --- Individual Tasks ---
 
 gulp.task "stylus", -> 
-  createWatcher {src: "src/**/*.styl", dest: "dist/"}, [
+  createWatcher {src: ["src/**/*.styl", "!src/libs/**/*"], dest: "dist/"}, [
     stylus()
   ]
 

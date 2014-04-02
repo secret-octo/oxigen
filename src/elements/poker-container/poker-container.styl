@@ -1,0 +1,42 @@
+@import "../../libs/stylus"
+
+$media-tablet = min-max($screen-sm, $screen-lg-desktop - 1)
+// $container-color = darken(#EEF, 2%)
+$container-color = darken(rgba(255, 245, 240, 0.2), 10%)
+
+.poker-container
+  center-block()
+
+  @media $media-max-phone
+    max-width: $screen-xs * 0.62
+    .poker-container-inner
+      @extend .col-xs-12
+      @extend .well
+      padding-top: 20px
+      background: $container-color
+      .poker-game-outer
+        @extend .col-xs-12
+
+  @media $media-tablet
+    max-width: $screen-sm * 0.80
+    .poker-container-inner
+      padding-top: 20px
+      @extend .col-sm-12
+      @extend .well
+
+      background: darken(#DEF, 2%)
+      .poker-game-outer
+        @extend .col-sm-6
+
+  @media $media-min-lg-desktop
+    max-width: $screen-lg * 0.75
+    .poker-container-inner
+      @extend .col-lg-12
+      @extend .well
+
+      padding-top: 20px
+      background: $container-color
+      .poker-game-outer
+        @extend .col-lg-4
+
+

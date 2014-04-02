@@ -1,0 +1,23 @@
+link(rel="import", href="../../../bower_components/polymer/polymer.html")
+link(rel="import", href="../poker-info-bottom/poker-info-bottom.html")
+link(rel="import", href="../poker-info-top/poker-info-top.html")
+link(rel="import", href="../poker-table/poker-table.html")
+link(rel="import", href="../poker-sub/poker-sub.html")
+link(rel="import", href="../poker-add/poker-add.html")
+
+
+
+polymer-element(name="poker-game")
+  template
+    link(rel="stylesheet", type="text/css", href="./poker-game.css")
+    .poker-game
+      poker-info-top
+      .container-fluid
+        .row
+          poker-sub
+          poker-table
+          poker-add
+
+      poker-info-bottom
+
+  script(type="text/javascript", src='./poker-game.js')

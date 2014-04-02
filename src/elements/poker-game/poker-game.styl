@@ -1,0 +1,49 @@
+@import "../../libs/stylus"
+
+
+$poker-sub-width = 20px
+
+.poker-game
+  @extend .well
+  @extend .well-sm
+  padding-botton: 0
+  @extend .text-center
+  center-block()
+  min-width: 260px
+  max-width: 260px
+  padding: 0
+  background: darken($well-bg, 2%)
+
+  poker-sub
+    @extend .pull-left
+    width: 20px
+
+    // @extend .col-xs-1
+    // @extend .col-sm-1
+    // @extend .col-md-1
+    // @extend .col-lg-1
+
+  poker-table
+    @extend .col-xs-1
+    @extend .col-sm-1
+    @extend .col-md-1
+    @extend .col-lg-1
+    padding: 0
+    width: 220px
+
+
+
+  poker-add
+    @extend .pull-right
+    width: 20px
+
+    // width: 5%
+    // @extend .col-xs-1
+    // @extend .col-sm-1
+    // @extend .col-md-1
+    // @extend .col-lg-1
+
+
+  max-width: 260px
+
+  // background: $brand-info

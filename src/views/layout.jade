@@ -3,15 +3,17 @@
 doctype html
 html
   head
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
     title= pageTitle
     link(rel='stylesheet', href='./styles/main.css')
     script(type="text/javascript", src='./bower_components/platform/platform.js')
 
-    link(rel="import", href="./elements/poker-card/poker-card.html")
+    link(rel="import", href="./elements/poker-container/poker-container.html")
+    //- link(rel="import", href="./elements/poker-game/poker-game.html")
+
 
     script(type="text/javascript", src='./bundle.js')
 
   body
-    .game
-      block game
+    block game
 
